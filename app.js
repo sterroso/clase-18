@@ -4,13 +4,13 @@ import dotenv from "dotenv";
 import session from "express-session";
 import cors from "cors";
 
+// Imports (modules)
 import constants from "./src/config/app.constants.js";
+import "./src/config/app.config.js";
+import logger from "./src/middlewares/logger.js";
+import UserRouter from "./src/routes/user.router.js";
 
 dotenv.config();
-
-// Imports (modules)
-import UserRouter from "./src/routes/user.router.js";
-import "./src/config/app.config.js";
 
 // Create Express app
 const app = e();
@@ -31,6 +31,7 @@ app.use(
     methods: constants.cors.allowedMethods,
   })
 );
+app.use(logger);
 
 // App routes
 app.use("/api/users", UserRouter);

@@ -17,8 +17,8 @@ export const getAllUsers = async (req, res) => {
     offset,
     sortByLastName,
     sortByFirstName,
-    sortByEmail,
     sortByDateOfBirth,
+    sortByGender,
     firstName,
     lastName,
     email,
@@ -60,12 +60,12 @@ export const getAllUsers = async (req, res) => {
     }
   }
 
-  if (["asc", "desc"].includes(sortByEmail)) {
+  if (["asc", "desc"].includes(sortByGender)) {
     if (options?.sort) {
-      options.sort.email = sortByEmail === "asc" ? 1 : -1;
+      options.sort.gender = sortByGender === "asc" ? 1 : -1;
     } else {
       options.sort = {
-        email: sortByEmail === "asc" ? 1 : -1,
+        gender: sortByGender === "asc" ? 1 : -1,
       };
     }
   }
@@ -104,6 +104,21 @@ export const getAllUsers = async (req, res) => {
       returnObject.status =
         constants.responseStatus.CLIENT_ERROR.NOT_FOUND.name;
       returnObject.error = "No users were found with the provided criteria.";
+
+      req.logger.error({
+        message: {
+          timestamp: `${new Date().toLocaleString("es-MX", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          })}`,
+          method: `${req.method}`,
+          path: `${req.path}`,
+          query: req?.query || null,
+          body: req?.body || null,
+          status: { code: returnStatus, name: returnObject.status },
+          error: returnObject.error,
+        },
+      });
     }
   } catch (error) {
     returnStatus =
@@ -112,6 +127,21 @@ export const getAllUsers = async (req, res) => {
     returnObject.status =
       constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
     returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req.query,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
   }
 
   res.status(returnStatus).json(returnObject);
@@ -135,6 +165,21 @@ export const getUserById = async (req, res) => {
       returnObject.status =
         constants.responseStatus.CLIENT_ERROR.NOT_FOUND.name;
       returnObject.error = "No user was found with the provided Id.";
+
+      req.logger.error({
+        message: {
+          timestamp: `${new Date().toLocaleString("es-MX", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          })}`,
+          method: `${req.method}`,
+          path: `${req.path}`,
+          query: req?.query || null,
+          body: req?.body || null,
+          status: { code: returnStatus, name: returnObject.status },
+          error: returnObject.error,
+        },
+      });
     }
   } catch (error) {
     returnStatus =
@@ -143,6 +188,83 @@ export const getUserById = async (req, res) => {
     returnObject.status =
       constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
     returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req?.query || null,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
+  }
+
+  res.status(returnStatus).json(returnObject);
+};
+
+export const getUserByEmail = async (req, res) => {
+  let returnStatus = constants.responseStatus.SUCCESSFUL.OK.code;
+  const returnObject = {
+    status: constants.responseStatus.SUCCESSFUL.OK.name,
+  };
+
+  const { email } = req.params;
+
+  try {
+    const user = await UserService.getUserByEmail(email);
+
+    if (user) {
+      returnObject.payload = user;
+    } else {
+      returnStatus = constants.responseStatus.CLIENT_ERROR.NOT_FOUND.code;
+
+      returnObject.status =
+        constants.responseStatus.CLIENT_ERROR.NOT_FOUND.name;
+      returnObject.error = "No user was found with the provided email address.";
+
+      req.logger.error({
+        message: {
+          timestamp: `${new Date().toLocaleString("es-MX", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          })}`,
+          method: `${req.method}`,
+          path: `${req.path}`,
+          query: req?.query || null,
+          body: req?.body || null,
+          status: { code: returnStatus, name: returnObject.status },
+          error: returnObject.error,
+        },
+      });
+    }
+  } catch (error) {
+    returnStatus =
+      constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.code;
+
+    returnObject.status =
+      constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
+    returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req?.query || null,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
   }
 
   res.status(returnStatus).json(returnObject);
@@ -167,6 +289,21 @@ export const createUser = async (req, res) => {
         constants.responseStatus.CLIENT_ERROR.BAD_REQUEST.name;
       returnObject.error =
         "User could not be created with the provided parameters.";
+
+      req.logger.error({
+        message: {
+          timestamp: `${new Date().toLocaleString("es-MX", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          })}`,
+          method: `${req.method}`,
+          path: `${req.path}`,
+          query: req?.query || null,
+          body: req?.body || null,
+          status: { code: returnStatus, name: returnObject.status },
+          error: returnObject.error,
+        },
+      });
     }
   } catch (error) {
     returnStatus =
@@ -175,6 +312,21 @@ export const createUser = async (req, res) => {
     returnObject.status =
       constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
     returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req?.query || null,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
   }
 
   res.status(returnStatus).json(returnObject);
@@ -201,6 +353,21 @@ export const updateUserById = async (req, res) => {
         constants.responseStatus.CLIENT_ERROR.BAD_REQUEST.name;
       returnObject.error =
         "User could not be updated with the provided parameters.";
+
+      req.logger.error({
+        message: {
+          timestamp: `${new Date().toLocaleString("es-MX", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          })}`,
+          method: `${req.method}`,
+          path: `${req.path}`,
+          query: req?.query || null,
+          body: req?.body || null,
+          status: { code: returnStatus, name: returnObject.status },
+          error: returnObject.error,
+        },
+      });
     }
   } catch (error) {
     returnStatus =
@@ -209,6 +376,21 @@ export const updateUserById = async (req, res) => {
     returnObject.status =
       constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
     returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req?.query || null,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
   }
 
   res.status(returnStatus).json(returnObject);
@@ -232,6 +414,21 @@ export const deleteUserById = async (req, res) => {
     returnObject.status =
       constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
     returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req?.query || null,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
   }
 
   res.status(returnStatus).json(returnObject);

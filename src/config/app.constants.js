@@ -9,6 +9,15 @@ export default {
     allowedOrigins: ["*"],
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
   },
+  logging: {
+    levels: {
+      console: "http",
+      file: "info",
+    },
+    paths: {
+      file: "./logs/app.log",
+    },
+  },
   responseStatus: {
     INFORMATIONAL: {
       CONTINUE: {

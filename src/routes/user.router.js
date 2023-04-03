@@ -13,6 +13,10 @@ router.post("/", UserController.createUser);
 
 router.put("/:userId", UserController.updateUserById);
 
+router.put("/:userId/role/:role", UserController.addRoleToUser);
+
 router.delete("/:userId", UserController.deleteUserById);
+
+router.delete("/:userId/role/:role", UserController.removeRoleFromUser);
 
 export default router;

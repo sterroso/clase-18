@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import logger from "./logger.js";
 
 dotenv.config();
 
@@ -7,34 +8,32 @@ try {
   mongoose.set("strictQuery", false);
   mongoose.connect(process.env.MONGO_URI);
 } catch (error) {
-  console.group("🍃 MongoDB Error❗");
-  console.error("🍃 MongoDB could not be connected 🤷‍♂️");
-  console.error(error);
-  console.groupEnd();
+  logger.error("🍃 MongoDB Error❗");
+  logger.error("🍃 MongoDB could not be connected 🤷‍♂️");
+  logger.error(error);
 }
 
 mongoose.connection.on("error", (error) => {
-  console.group("🍃 MongoDB Error❗");
-  console.error(error);
-  console.groupEnd();
+  logger.error("🍃 MongoDB Error❗");
+  logger.error(error);
 });
 
 mongoose.connection.on("connecting", () => {
-  console.info("🍃 MongoDB Connecting ...");
+  logger.info("🍃 MongoDB Connecting ...");
 });
 
 mongoose.connection.on("connected", () => {
-  console.info("🍃 MongoDB Connected! 👍");
+  logger.info("🍃 MongoDB Connected! 👍");
 });
 
 mongoose.connection.on("disconnecting", () => {
-  console.info("🍃 MongoDB Disconnecting ...");
+  logger.warn("🍃 MongoDB Disconnecting ...");
 });
 
 mongoose.connection.on("disconnected", () => {
-  console.info("🍃 MongoDB Disconnected 🧑‍🔧");
+  logger.warn("🍃 MongoDB Disconnected 🧑‍🔧");
 });
 
 mongoose.connection.on("reconnected", () => {
-  console.info("🍃 MongoDB Reconnected 🦾");
+  logger.info("🍃 MongoDB Reconnected 🦾");
 });

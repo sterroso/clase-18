@@ -16,6 +16,7 @@ export default {
     },
     paths: {
       file: "./logs/app.log",
+      server: "./logs/server.log",
     },
   },
   responseStatus: {

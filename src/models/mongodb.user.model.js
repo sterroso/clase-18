@@ -3,6 +3,19 @@ import { differenceInYears } from "date-fns";
 import MongooseDelete from "mongoose-delete";
 import MongoosePaginate from "mongoose-paginate-v2";
 
+export const validUserRoles = [
+  "admin",
+  "techlead",
+  "devops",
+  "tester",
+  "developer",
+  "manager",
+  "seller",
+  "user",
+];
+
+export const validUserGenders = ["female", "male", "other", "not specified"];
+
 export const userSchema = new Schema(
   {
     email: {
@@ -30,7 +43,12 @@ export const userSchema = new Schema(
     gender: {
       type: String,
       required: true,
-      enum: ["male", "female", "other", "not specified"],
+      validate: {
+        validator: (value) => {
+          return validUserGenders.includes(value);
+        },
+        message: () => "Must provide a valid gender option.",
+      },
       default: "not specified",
     },
     dateOfBirth: {

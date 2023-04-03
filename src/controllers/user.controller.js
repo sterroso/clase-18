@@ -21,7 +21,7 @@ export const getAllUsers = async (req, res) => {
     sortByGender,
     firstName,
     lastName,
-    email,
+    gender,
   } = req.query;
 
   const options = {
@@ -88,8 +88,8 @@ export const getAllUsers = async (req, res) => {
     query.lastName = new RegExp(`${lastName}`, "gi");
   }
 
-  if (email) {
-    query.email = new RegExp(`${email}`, "gi");
+  if (gender) {
+    query.gender = new RegExp(`^${gender}$`, "i");
   }
 
   try {
@@ -345,6 +345,128 @@ export const updateUserById = async (req, res) => {
 
     if (updatedUser) {
       returnObject.status = constants.responseStatus.SUCCESSFUL.OK.name;
+      returnObject.payload = updatedUser;
+    } else {
+      returnStatus = constants.responseStatus.CLIENT_ERROR.BAD_REQUEST.code;
+
+      returnObject.status =
+        constants.responseStatus.CLIENT_ERROR.BAD_REQUEST.name;
+      returnObject.error =
+        "User could not be updated with the provided parameters.";
+
+      req.logger.error({
+        message: {
+          timestamp: `${new Date().toLocaleString("es-MX", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          })}`,
+          method: `${req.method}`,
+          path: `${req.path}`,
+          query: req?.query || null,
+          body: req?.body || null,
+          status: { code: returnStatus, name: returnObject.status },
+          error: returnObject.error,
+        },
+      });
+    }
+  } catch (error) {
+    returnStatus =
+      constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.code;
+
+    returnObject.status =
+      constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
+    returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req?.query || null,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
+  }
+
+  res.status(returnStatus).json(returnObject);
+};
+
+export const addRoleToUser = async (req, res) => {
+  let returnStatus = constants.responseStatus.SUCCESSFUL.OK.code;
+  const returnObject = { status: constants.responseStatus.SUCCESSFUL.OK.name };
+
+  const { userId, role } = req.params;
+
+  try {
+    const updatedUser = await UserService.addRoleToUser(userId, role);
+
+    if (updatedUser) {
+      returnObject.payload = updatedUser;
+    } else {
+      returnStatus = constants.responseStatus.CLIENT_ERROR.BAD_REQUEST.code;
+
+      returnObject.status =
+        constants.responseStatus.CLIENT_ERROR.BAD_REQUEST.name;
+      returnObject.error =
+        "User could not be updated with the provided parameters.";
+
+      req.logger.error({
+        message: {
+          timestamp: `${new Date().toLocaleString("es-MX", {
+            dateStyle: "short",
+            timeStyle: "medium",
+          })}`,
+          method: `${req.method}`,
+          path: `${req.path}`,
+          query: req?.query || null,
+          body: req?.body || null,
+          status: { code: returnStatus, name: returnObject.status },
+          error: returnObject.error,
+        },
+      });
+    }
+  } catch (error) {
+    returnStatus =
+      constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.code;
+
+    returnObject.status =
+      constants.responseStatus.SERVER_ERROR.INTERNAL_SERVER_ERROR.name;
+    returnObject.error = error.message;
+
+    req.logger.error({
+      message: {
+        timestamp: `${new Date().toLocaleString("es-MX", {
+          dateStyle: "short",
+          timeStyle: "medium",
+        })}`,
+        method: `${req.method}`,
+        path: `${req.path}`,
+        query: req?.query || null,
+        body: req?.body || null,
+        status: { code: returnStatus, name: returnObject.status },
+        error: returnObject.error,
+      },
+    });
+  }
+
+  res.status(returnStatus).json(returnObject);
+};
+
+export const removeRoleFromUser = async (req, res) => {
+  let returnStatus = constants.responseStatus.SUCCESSFUL.OK.code;
+  const returnObject = { status: constants.responseStatus.SUCCESSFUL.OK.name };
+
+  const { userId, role } = req.params;
+
+  try {
+    const updatedUser = await UserService.removeRoleFromUser(userId, role);
+
+    if (updatedUser) {
       returnObject.payload = updatedUser;
     } else {
       returnStatus = constants.responseStatus.CLIENT_ERROR.BAD_REQUEST.code;
